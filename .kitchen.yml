@@ -1,0 +1,37 @@
+---
+# Dokken lets Test Kitchen test Chef cookbooks in Docker containers.
+driver:
+  name: dokken
+  privileged: true
+
+# The transport tells Test Kitchen how to communicate with the container.
+transport:
+  name: dokken
+
+# The provisioner installs/runs Chef and converges the cookbook.
+provisioner:
+  name: dokken
+  product_name: chef
+  product_version: latest
+
+# InSpec verifies the server after Chef finishes.
+verifier:
+  name: inspec
+
+# Use Ubuntu 22.04 as our disposable test system.
+platforms:
+  - name: ubuntu-22.04
+    driver:
+      image: dokken/ubuntu-22.04
+      pid_one_command: /bin/systemd
+      intermediate_instructions:
+        - RUN apt-get update
+
+# A suite connects one run list with one set of tests.
+suites:
+  - name: default
+    run_list:
+      - recipe[web_server::default]
+    verifier:
+      inspec_tests:
+        - cookbooks/web_server/test/integration/default

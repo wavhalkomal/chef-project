@@ -1,0 +1,10 @@
+# Test Kitchen creates this directory to store temporary instance information.
+.kitchen/
+
+# Chef creates this lock file after resolving Policyfile dependencies.
+# It can be committed in production, but this beginner project regenerates it during validation.
+Policyfile.lock.json
+
+# Ignore common operating-system and editor files.
+.DS_Store
+*.swp

@@ -1,0 +1,36 @@
+name: Chef validation
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+# The workflow only needs permission to read repository files.
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    # Chef Workstation already contains Chef and Cookstyle.
+    container:
+      image: chef/chefworkstation:latest
+
+    env:
+      # Chef command-line tools require license acceptance in automated environments.
+      CHEF_LICENSE: accept-silent
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Trust the checked-out repository
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      - name: Check Chef code style
+        run: chef exec cookstyle cookbooks
+
+      - name: Validate the Policyfile
+        run: chef install Policyfile.rb

@@ -1,0 +1,20 @@
+server {
+    # The port comes from attributes/default.rb through the recipe.
+    listen <%= @port %> default_server;
+    server_name _;
+
+    # Serve website files from the Chef-managed directory.
+    root <%= @document_root %>;
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+
+    # A simple endpoint used by monitoring and automated tests.
+    location = /health {
+        access_log off;
+        default_type text/plain;
+        return 200 "healthy\n";
+    }
+}
